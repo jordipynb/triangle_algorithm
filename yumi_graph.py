@@ -1,5 +1,4 @@
 from collections import defaultdict as dd
-from math import inf
 
 class edge:
     def __init__(self, to:int, cost:int, cap:int, flow:int, rev_edge:int):

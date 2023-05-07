@@ -1,7 +1,7 @@
 from collections import defaultdict
 from graph import node 
-import math 
-from graph import create_graph_2
+from math import inf
+from graph import create_graph
 
 def create_residual_net(G:dict[node,dict[node,tuple[int,int]]]):
     residual_net = defaultdict(lambda: defaultdict(lambda :None))
@@ -47,24 +47,24 @@ def min_cost_flow(G,node_s,node_t):
 #                    pi[v]=u
 
 def Bellman_Ford(G:dict[node,dict[node,tuple[int,int]]],node_s):
-    d=defaultdict(lambda:math.inf)
+    d=defaultdict(lambda:inf)
     d[node_s]=0
     pi=defaultdict(lambda:None)
     for _ in range(len(G.keys())-1):
         for v1,edges in G.items():
             for v2,p in edges.items():
-                if not p==None and not p[0]==0 and not d[v1]==math.inf and d[v2]>d[v1]+p[1]:
+                if not p==None and not p[0]==0 and not d[v1]==inf and d[v2]>d[v1]+p[1]:
                     d[v2]=d[v1]+p[1]
                     pi[v2]=v1
     for v1,edges in G.items():
         for v2,p in edges.items():
-            if not p==None and not p[0]==0 and not d[v2]==math.inf and not d[v1]==math.inf and  d[v2]>d[v1]+p[1]:
+            if not p==None and not p[0]==0 and not d[v2]==inf and not d[v1]==inf and  d[v2]>d[v1]+p[1]:
                 return None
     return pi
 
 def find_path(G,node_s,node_t):
     pi=Bellman_Ford(G,node_s)
-    cap=math.inf
+    cap=inf
     path=[]
     if not pi[node_t]==None:
         current=node_t
@@ -80,14 +80,35 @@ def print_network(G):
         for v2,p in edges.items():
             print(v1,v2,p)
 
-g,s,t=create_graph_2([1, 3, 4, 7, 8, 2])
+def nmax(G):
+    n = 0
+    for v1, e in G.items():
+        if v1.v != 's': break
+        for v2, f in e.items():
+            if f == 1:
+                n += dfs_visit(G, v2) + 1
+    return n
+
+def dfs_visit(G, node):
+    for v2,f in G[node].items():
+        if f == 1:
+            if v2.v == 't': return 0
+            elif type(v2.v) != int: return dfs_visit(G, v2)
+            else: return dfs_visit(G, v2) + 1
+    return 0
+
+a = [1]*100
+g,s,t=create_graph(a)
 #path,cap=find_path(g,s,t)
-print_network(g)
+#print_network(g)
 #for u,v in path:
 #    print(u.v,v.v)
 print()
 print("Max Flow")
-print_network(min_cost_flow(g,s,t))
+#print_network(min_cost_flow(g,s,t))
+result = min_cost_flow(g,s,t)
+print("Flows Done!")
+print(nmax(result))
 
 
 
