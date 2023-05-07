@@ -1,25 +1,25 @@
 from collections import defaultdict as dd
-import pathlib
 from graph import node 
+
 class edge:
-    def __init__(self, to:int, cost:int, cap:int, flow:int, rev_edge:int):
+    def __init__(self, to:int, cost:int, cap:int): # flow:int):#, rev_edge:int):
         self.to = to
         self.cost = cost
         self.cap = cap
-        self.flow = flow
-        self.rev_edge = rev_edge
+        # self.flow = flow
+        # self.rev_edge = rev_edge
     
     def __repr__(self):
         return f"-> {self.to}"
 
 
-def add_edge(graph,v:int, u:int, cost:int, cap:int):
+# def add_edge(graph,v:int, u:int, cost:int, cap:int):
     # para acceder a la arista inversa en el grafo residual u -> v sería graph[e.to][e.rev_edge]
     # lo mismo para desde la inversa ir a la arista del grafo
-    index_v = len(graph[v])                           # donde se va a ubicar la arista del grafo
-    index_u = len(graph[u])                           # donde se va a ubicar la arista reversa del grafo residual
-    graph[v].append(edge(u,  cost, cap, 0, index_u))  # arista del grafo v -> u
-    #graph[u].append(edge(v, -cost,   0, 0, index_v))  # arista inversa del grafo residual u -> v
+    # index_v = len(graph[v])                           # donde se va a ubicar la arista del grafo
+    # index_u = len(graph[u])                           # donde se va a ubicar la arista reversa del grafo residual
+    # graph[v].append(edge(u,  cost, cap, 0))# , index_u))  # arista del grafo v -> u
+    # graph[u].append(edge(v, -cost,   0, 0, index_v))  # arista inversa del grafo residual u -> v
 
 
 def create_graph(a:list[int]):
@@ -33,11 +33,11 @@ def create_graph(a:list[int]):
 
     for i in range(n, 0, -1):
         value = a[i-1]
-        add_edge(graph,s, 3*i-1, 0, 1)       # este es vi,1
-        add_edge(graph,s, 3*i-2, 0, 1)       # este es vi,2
-        add_edge(graph,3*i-1, 3*i, -1, 1)
-        add_edge(graph,3*i-2, 3*i, -1, 1)    
-        add_edge(graph,3*i, t, 0, 1)         # este es vi,3        
+        graph[s].append(edge(3*i-1, 0, 1))       # este es vi,1
+        graph[s].append(edge(3*i-2, 0, 1))       # este es vi,2
+        graph[3*i-1].append(edge(3*i, -1, 1))
+        graph[3*i-2].append(edge(3*i, -1, 1))    
+        graph[3*i].append(edge(t, 0, 1))       # este es vi,3        
         
         iequal_valid = igreater_valid = ilower_valid = imodule_valid = False  
         try:
@@ -57,14 +57,14 @@ def create_graph(a:list[int]):
             imodule_valid = True
         except: None
         
-        if iequal_valid: add_edge(graph,3*i-1, 3*ie-1, 0, 4)
-        if igreater_valid and (not iequal_valid or ig < ie): add_edge(graph,3*i, 3*ig-1, 0, 1)
-        if ilower_valid   and (not iequal_valid or il < ie): add_edge(graph,3*i, 3*il-1, 0, 1)
+        if iequal_valid: graph[3*i-1].append(edge(3*ie-1, 0, 4))
+        if igreater_valid and (not iequal_valid or ig < ie): graph[3*i].append(edge(3*ig-1, 0, 1))
+        if ilower_valid   and (not iequal_valid or il < ie): graph[3*i].append(edge(3*il-1, 0, 1))
         if imodule_valid: 
-            add_edge(graph,3*i-2, 3*im-2, 0, 4)
-            add_edge(graph,3*i, 3*im-2, 0, 1)
+            graph[3*i-2].append(edge(3*im-2, 0, 4))
+            graph[3*i].append(edge(3*im-2, 0, 1))
         refer[value] = modul[value%7] = i
-    add_edge(graph,t, d, 0, 4)
+    graph[t].append(edge(d, 0, 4))
     return graph
 
 def generate_graph(notes):

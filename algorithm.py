@@ -1,8 +1,6 @@
 from collections import defaultdict
-from graph import node 
 from math import inf
-from graph import create_graph
-from yumi_graph import generate_graph
+from graph import node, create_graph
 
 def create_residual_net(G:dict[node,dict[node,tuple[int,int]]]):
     residual_net = defaultdict(lambda: defaultdict(lambda :None))
@@ -85,50 +83,9 @@ def print_network(G):
         for v2,p in edges.items():
             print(v1,v2,p)
 
-def nmax(G):
-    n = 0
-    for v1, e in G.items():
-        if v1.v != 's': break
-        for v2, f in e.items():
-            if f == 1:
-                n += dfs_visit(G, v2) + 1
-    return n
-
-def dfs_visit(G, node):
-    for v2,f in G[node].items():
-        if f == 1:
-            if v2.v == 't': return 0
-            elif type(v2.v) != int: return dfs_visit(G, v2)
-            else: return dfs_visit(G, v2) + 1
-    return 0
-
 print()
 print("Max Flow")
-a = [1]*100
-g,s,t=create_graph([1, 3, 4, 7, 8, 2])
+# a = [1]*100
+g,s,t=create_graph([1,3,5,4,4,7,9,11])
 result,max = min_cost_flow(g,s,t)
-print("Flows Done!")
 print(max)
-g,s,t=create_graph(a)
-result,max = min_cost_flow(g,s,t)
-print("Flows Done!")
-print(max)
-g,s,t=generate_graph([1, 3, 4, 7, 8, 2])
-result,max = min_cost_flow(g,s,t)
-print("Flows Done!")
-print(max)
-g,s,t=generate_graph(a)
-result,max = min_cost_flow(g,s,t)
-print("Flows Done!")
-print(max)
-
-
-
-
-        
-
-
-
-
-
-
