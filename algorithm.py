@@ -2,6 +2,7 @@ from collections import defaultdict
 from graph import node 
 from math import inf
 from graph import create_graph
+from yumi_graph import generate_graph
 
 def create_residual_net(G:dict[node,dict[node,tuple[int,int]]]):
     residual_net = defaultdict(lambda: defaultdict(lambda :None))
@@ -13,6 +14,7 @@ def create_residual_net(G:dict[node,dict[node,tuple[int,int]]]):
 
 
 def min_cost_flow(G,node_s,node_t):
+    output=0
     G_f=create_residual_net(G)
     flow=defaultdict(lambda:defaultdict(lambda:None))
     for v1,edges in G.items():
@@ -22,15 +24,18 @@ def min_cost_flow(G,node_s,node_t):
     while not len(path)==0:
         for v1,v2 in path:
             if  G[v1][v2] == None: # la arista no esta en la red original por tanto es una arista de retroceso
+                if G_f[v1][v2][1] == -1: output-=1
                 flow[v2][v1]-=cap  #actualizar red original 
                 G_f[v1][v2]=(G_f[v1][v2][0]-cap,G_f[v1][v2][1])   #actualizar arista de retroceso en la red residual
                 G_f[v2][v1]=(G_f[v2][v1][0]+cap,G_f[v2][v1][1])    #actualizar arista original en la red residual
             else:                    # no es una arista de retroceso 
+                if G_f[v1][v2][1] == -1: output+=1
                 flow[v1][v2]+=cap      #actualizar arista en la red original             
                 G_f[v1][v2]=(G_f[v1][v2][0]-cap,G_f[v1][v2][1])      #actualizar arista original en la red residual
                 G_f[v2][v1]=(G_f[v2][v1][0]+cap,G_f[v2][v1][1])       #actualizar arista de retroceso en la red residual
-        path, cap = find_path(G_f,node_s,node_t)    
-    return flow
+        path, cap = find_path(G_f,node_s,node_t)   
+     
+    return flow,output
 
 #def Dijkstra(G:dict[node,dict[node,tuple(int,int)]],Q:tuple(node,node)):
 #    S=[]
@@ -97,18 +102,25 @@ def dfs_visit(G, node):
             else: return dfs_visit(G, v2) + 1
     return 0
 
-a = [1]*100
-g,s,t=create_graph(a)
-#path,cap=find_path(g,s,t)
-#print_network(g)
-#for u,v in path:
-#    print(u.v,v.v)
 print()
 print("Max Flow")
-#print_network(min_cost_flow(g,s,t))
-result = min_cost_flow(g,s,t)
+a = [1]*100
+g,s,t=create_graph([1, 3, 4, 7, 8, 2])
+result,max = min_cost_flow(g,s,t)
 print("Flows Done!")
-print(nmax(result))
+print(max)
+g,s,t=create_graph(a)
+result,max = min_cost_flow(g,s,t)
+print("Flows Done!")
+print(max)
+g,s,t=generate_graph([1, 3, 4, 7, 8, 2])
+result,max = min_cost_flow(g,s,t)
+print("Flows Done!")
+print(max)
+g,s,t=generate_graph(a)
+result,max = min_cost_flow(g,s,t)
+print("Flows Done!")
+print(max)
 
 
 
