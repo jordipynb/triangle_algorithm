@@ -119,7 +119,5 @@ def print_network(G):
 
 
 print("Max Flow")
-# a = [1]*100
-result,max = min_cost_flow([1,3,5,4,4,7,9,11])
-# print_network(result)
+result,max = min_cost_flow([4,4,7,9,11])
 print(max)
