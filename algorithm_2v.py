@@ -6,9 +6,6 @@ class edge:
         self.cap = cap
         self.cost = cost
 
-    def __repr__(self) -> str:
-        return f'({self.cap}, {self.cost})'
-
 def add_edge(graph:dict[int, dict[int, edge]], v:int, u:int, cap:int, cost:int):
     graph[v][u] = edge(cap,  cost) # arista del grafo v -> u
     graph[u][v] = edge(  0, -cost) # arista inversa del grafo residual u -> v
@@ -17,7 +14,7 @@ def add_edge_list(graph:dict[int, dict[int, edge]], v:int, index:list[int]):
     for elem in index: add_edge(graph, v, elem, 1, 0)
 
 def create_residual_graph(a:list[int]):
-    graph:dict[int, dict[int, edge]] = dd(lambda:dd(lambda:None))  # grafo del sistema donde por cada nota hay 3 vertices y cada arista tiene su inversa
+    graph:dict[int, dict[int, edge]] = dd(lambda:dd(lambda:None))  # grafo residual donde por cada nota hay 2 vertices y cada arista tiene su inversa
     n = len(a)
     s = 0
     t = 2*n+1
@@ -69,20 +66,6 @@ def min_cost_flow(a:list[int]):
         path, cap = find_path(G_f, s, t)   
     return flow, output
 
-#def Dijkstra(G:dict[node,dict[node,tuple(int,int)]],Q:tuple(node,node)):
-#    S=[]
-#    pi=defaultdict(lambda:None)
-#    d=defaultdict(int)
-#    while len(Q)>0:
-#        u=extract_min(Q)
-#        if u.v=='t': return pi
-#        S.append(u)
-#        for v,p in G[u].items():
-#            if not p[0] == 0:
-#                if d[v]>d[u]+G[u][v][1]:
-#                    d[v]=d[u]+G[u][v][1]
-#                    pi[v]=u
-
 def Bellman_Ford(G:dict[int, dict[int, edge]], s:int):
     d = dd(lambda:inf)
     d[s] = 0
@@ -112,11 +95,10 @@ def find_path(G:dict[int, dict[int, edge]], s:int, t:int):
             current=previous
     return path,cap
 
-def print_network(G):
-    for v1,edges in G.items():
-        for v2,p in edges.items():
-            print(v1,v2,p)
-
+# def print_network(G):
+#     for v1,edges in G.items():
+#         for v2,p in edges.items():
+#             print(v1,v2,p)
 
 print("Max Flow")
 result,max = min_cost_flow([4,4,7,9,11])
