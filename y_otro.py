@@ -17,18 +17,18 @@ def create_residual_graph(a:list[int]):
     graph:dict[int, dict[int, edge]] = dd(lambda:dd(lambda:None))  # grafo del sistema donde por cada nota hay 3 vertices y cada arista tiene su inversa
     n = len(a)
     s = 0
-    t = 3*n+1
-    d = 3*n+2
+    t = 4*n+1
+    d = 4*n+2
     refer:dict[int, int] = {}          # diccionario que guarda la posicion mas cercana de los valores visitados
     modul:dict[int, int] = {}          # diccionario a lo sumo con tamaño 7 que guarda la posicion mas cercana de los valores % 7 (congruencia)
 
     for i in range(n, 0, -1):
         value = a[i-1]
-        add_edge(graph, s, 3*i-1, 1, 0)         # este es vi,1
-        add_edge(graph, s, 3*i-2, 1, 0)         # este es vi,2
-        add_edge(graph, 3*i-1, 3*i, 1, -1)
-        add_edge(graph, 3*i-2, 3*i, 1, -1) 
-        add_edge(graph, 3*i, t, 1, 0)           # este es vi,3        
+        add_edge(graph, s, 4*i-1, 1, 0)              
+        add_edge(graph, 4*i-3, 4*i-1, 1, 0)          
+        add_edge(graph, 4*i-2, 4*i-1, 1, 0)
+        add_edge(graph, 4*i-1, 4*i, 1, -1) 
+        add_edge(graph, 4*i, t, 1, 0)            
         
         iequal_valid = igreater_valid = ilower_valid = imodule_valid = False  
         try:
@@ -48,12 +48,12 @@ def create_residual_graph(a:list[int]):
             imodule_valid = True
         except: None
         
-        if iequal_valid: add_edge(graph, 3*i-1, 3*ie-1, 4, 0)
-        if igreater_valid and (not iequal_valid or ig < ie): add_edge(graph, 3*i, 3*ig-1, 1, 0)
-        if ilower_valid   and (not iequal_valid or il < ie): add_edge(graph, 3*i, 3*il-1, 1, 0)
+        if iequal_valid: add_edge(graph, 4*i-2, 4*ie-2, 4, 0)
+        if igreater_valid and (not iequal_valid or ig < ie): add_edge(graph, 4*i, 4*ig-2, 1, 0)
+        if ilower_valid   and (not iequal_valid or il < ie): add_edge(graph, 4*i, 4*il-2, 1, 0)
         if imodule_valid: 
-            add_edge(graph, 3*i-2, 3*im-2, 4, 0)
-            add_edge(graph, 3*i, 3*im-2, 1, 0)
+            add_edge(graph, 4*i-3, 4*im-3, 4, 0)
+            add_edge(graph, 4*i, 4*im-3, 1, 0)
         refer[value] = modul[value%7] = i
     add_edge(graph, t, d, 4, 0)
     return graph, s, d
@@ -133,7 +133,12 @@ def print_network(G):
 
 
 print("Max Flow")
-a = [1]*1000
+a=[1]*100
 result,max = min_cost_flow(a)
-# print_network(result)
+print(max)
+a=[1]*1000
+result,max = min_cost_flow(a)
+print(max)
+a = [1,3,5,4,4,7,9,11]
+result,max = min_cost_flow(a)
 print(max)
